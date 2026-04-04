@@ -32,22 +32,61 @@ const OwnerHomeScreen = () => {
     skip: !ownerId
   });
 
-  // Calculate today's stats:
-  const todayStr = new Date().toISOString().split('T')[0]
+  // Use local date (not UTC) to avoid timezone mismatch
+  const now = new Date()
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
 
-  // Filter bookings where slot date matches today:
-  const todayBookings = bookings.filter(b => {
+  // Helper: get amount from booking row, fallback to court price_base
+  const getBookingAmount = (b) => {
+    const amt = parseInt(b.amount)
+    if (amt && amt > 0) return amt
+    // Fallback: use court's base price if amount wasn't stored
+    return parseInt(b.slots?.courts?.price_base) || 0
+  }
+
+  // Filter booking rows where the slot date is today
+  const todayBookingRows = bookings.filter(b => {
     const slotDate = b.slots?.date
     return slotDate === todayStr
   })
 
-  const todayRevenue = todayBookings.reduce((sum, b) => {
-    return sum + (parseInt(b.amount) || 0)
-  }, 0)
+  // Group booking rows into sessions by player_id + date
+  // (same player booking multiple slots = 1 session)
+  const groupIntoSessions = (rows) => {
+    const sessions = {}
+    rows.forEach(b => {
+      const key = `${b.player_id}-${b.slots?.date}`
+      if (!sessions[key]) {
+        sessions[key] = {
+          player_id: b.player_id,
+          date: b.slots?.date,
+          totalAmount: 0,
+          slotCount: 0,
+        }
+      }
+      sessions[key].totalAmount += getBookingAmount(b)
+      sessions[key].slotCount += 1
+    })
+    return Object.values(sessions)
+  }
 
+  // Today stats
+  const todaySessions = groupIntoSessions(todayBookingRows)
+  const todayRevenue = todayBookingRows.reduce((sum, b) => sum + getBookingAmount(b), 0)
+  const todaySessionCount = todaySessions.length
+
+  // All-time stats
   const totalSlots = bookings.length
+  const allSessions = groupIntoSessions(bookings)
+  const totalSessionCount = allSessions.length
+  const totalRevenue = bookings.reduce((sum, b) => sum + getBookingAmount(b), 0)
 
-  const revenueLabel = todayRevenue > 0 ? `${todayBookings.length} booking(s) today` : 'No bookings today'
+  // Revenue label
+  const revenueLabel = todaySessionCount > 0
+    ? `${todaySessionCount} booking(s) today — Rs. ${todayRevenue.toLocaleString()}`
+    : totalSessionCount > 0
+      ? `${totalSessionCount} total booking(s)`
+      : 'No bookings yet'
 
   // Format time helper:
   const formatTime = (timeStr) => {
@@ -186,13 +225,14 @@ const OwnerHomeScreen = () => {
         {/* Stats row */}
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
-            <Text style={styles.statLabel}>TODAY&apos;S REVENUE</Text>
-            <Text style={styles.statValueGreen}>Rs. {todayRevenue.toLocaleString()}</Text>
+            <Text style={styles.statLabel}>TOTAL REVENUE</Text>
+            <Text style={styles.statValueGreen}>Rs. {totalRevenue.toLocaleString()}</Text>
             <Text style={styles.statDelta}>{revenueLabel}</Text>
           </View>
           <View style={styles.statCard}>
             <Text style={styles.statLabel}>BOOKINGS</Text>
-            <Text style={styles.statValueWhite}>{totalSlots} Slots</Text>
+            <Text style={styles.statValueWhite}>{totalSessionCount} Sessions</Text>
+            <Text style={styles.statDelta}>{totalSlots} total slots</Text>
           </View>
         </View>
 

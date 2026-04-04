@@ -200,12 +200,19 @@ const OwnerSetupScreen = ({ route, navigation }) => {
 
     // Step 3: DISPATCH LOGIN IMMEDIATELY — navigate to Owner dashboard NOW
     // Do this BEFORE image upload and auth update so user doesn't wait
+    const venueNameValue = courtName.trim()
+    if (!venueNameValue) {
+      Alert.alert('Required', 'Court name is required.')
+      setLoading(false)
+      return
+    }
+
     dispatch(login({
       role: 'Owner',
       profileDetails: {
         ...result.payload,
-        venueName:  courtName.trim(),
-        venue_name: courtName.trim(),
+        venueName:  venueNameValue,
+        venue_name: venueNameValue,
         first_name: firstName.trim(),
         last_name:  lastName.trim(),
         pricing:    profilePayload.pricing,
@@ -228,15 +235,22 @@ const OwnerSetupScreen = ({ route, navigation }) => {
         })
     }
 
-    // Step 5: Update password in background AFTER navigation
+    // Step 5: Sync email to auth.users bypassing confirmation, and set password
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+    if (currentUser && email.trim()) {
+      supabase.rpc('sync_profile_email_to_auth', {
+        user_id: currentUser.id,
+        user_email: email.trim().toLowerCase(),
+      }).then(({ error }) => {
+        if (error) console.log('Email sync error:', error.message)
+      })
+    }
+
     if (password) {
       supabase.auth.updateUser({
         password: password.trim(),
-      })
-      .then(({ error }) => {
-        if (error) {
-          // background error
-        }
+      }).then(({ error }) => {
+        if (error) console.log('Password update error:', error.message)
       })
     }
 

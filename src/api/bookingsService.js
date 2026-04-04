@@ -37,10 +37,10 @@ export const bookingsApi = createApi({
             // Calculate active distinct "sessions" (court + day combinations)
             const activeSessions = new Set()
             existingBookings.forEach(b => {
-              const slotDate   = b.slots?.date
+              const slotDate = b.slots?.date
               const endTimeStr = b.slots?.end_time
               const slotCourtId = b.slots?.court_id || b.slots?.courts?.id
-              
+
               if (!slotDate || !endTimeStr || !slotCourtId) return
 
               const [h, m, s] = endTimeStr.split(':').map(Number)
@@ -64,10 +64,10 @@ export const bookingsApi = createApi({
           const perSlotAmount = Math.round(amount / slotIds.length)
           const bookingInserts = slotIds.map(slotId => ({
             player_id: user.id,
-            slot_id:   slotId,
-            status:    'confirmed',
-            payment:   payment,
-            amount:    perSlotAmount,
+            slot_id: slotId,
+            status: 'confirmed',
+            payment: payment,
+            amount: perSlotAmount,
           }))
 
           const { data, error } = await supabase
@@ -154,9 +154,9 @@ export const bookingsApi = createApi({
 
           // Step 7: Enrich bookings with all data
           const enriched = bookings.map(booking => {
-            const slot  = slotMap[booking.slot_id]  || {}
-            const court = courtMap[slot.court_id]   || {}
-            const owner = ownerMap[court.owner_id]  || null
+            const slot = slotMap[booking.slot_id] || {}
+            const court = courtMap[slot.court_id] || {}
+            const owner = ownerMap[court.owner_id] || null
 
             return {
               ...booking,
@@ -189,7 +189,7 @@ export const bookingsApi = createApi({
           // Step 1: Get owner's courts
           const { data: ownerCourts } = await supabase
             .from('courts')
-            .select('id, name')
+            .select('id, name, price_base')
             .eq('owner_id', user.id)
 
           if (!ownerCourts?.length) return { data: [] }
@@ -237,9 +237,9 @@ export const bookingsApi = createApi({
 
           // Step 8: Enrich ALL bookings with slot, court, player data
           const enriched = bookings.map(booking => {
-            const slot    = slotMap[booking.slot_id] || {}
-            const court   = courtMap[slot.court_id]  || {}
-            const player  = profileMap[booking.player_id] || null
+            const slot = slotMap[booking.slot_id] || {}
+            const court = courtMap[slot.court_id] || {}
+            const player = profileMap[booking.player_id] || null
 
             return {
               ...booking,

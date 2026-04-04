@@ -16,6 +16,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 import InputField from '../components/InputField';
 import PrimaryButton from '../components/PrimaryButton';
+import AreaPickerModal from '../components/AreaPickerModal';
+import MapLocationPicker from '../components/MapLocationPicker';
 const SPORT_OPTIONS = ['Padel', 'Cricket', 'Futsal']
 
 const OwnerEditVenueScreen = ({ navigation }) => {

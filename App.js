@@ -90,17 +90,23 @@ const AuthListener = () => {
       if (session?.user) {
         dispatch(fetchProfile(session.user.id)).then((result) => {
           if (fetchProfile.fulfilled.match(result)) {
-            const profile = result.payload;
-            if (profile?.role && (profile.first_name || profile.venue_name)) {
+            const profile = result.payload
+            const hasOwnerProfile = profile?.role === 'Owner' && !!(profile.venue_name || profile.venueName)
+            const hasPlayerProfile = profile?.role === 'Player' && !!profile.first_name
+            if (hasOwnerProfile || hasPlayerProfile) {
               dispatch(login({
                 role: profile.role,
-                profileDetails: profile,
-              }));
+                profileDetails: {
+                  ...profile,
+                  venue_name: profile.venue_name || profile.venueName || '',
+                  venueName:  profile.venue_name || profile.venueName || '',
+                },
+              }))
             }
           }
-        });
+        })
       }
-    });
+    })
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(

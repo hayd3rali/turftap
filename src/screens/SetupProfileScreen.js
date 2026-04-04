@@ -116,15 +116,22 @@ const SetupProfileScreen = ({ route, navigation }) => {
       profileDetails: result.payload,
     }))
 
-    // Step 3: Set password in background
+    // Step 3: Sync email to auth.users bypassing confirmation, and set password
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+    if (currentUser && email.trim()) {
+      supabase.rpc('sync_profile_email_to_auth', {
+        user_id: currentUser.id,
+        user_email: email.trim().toLowerCase(),
+      }).then(({ error }) => {
+        if (error) console.log('Email sync error:', error.message)
+      })
+    }
+
     if (password) {
       supabase.auth.updateUser({
         password: password.trim(),
-      })
-      .then(({ error }) => {
-        if (error) {
-          // background error
-        }
+      }).then(({ error }) => {
+        if (error) console.log('Password update error:', error.message)
       })
     }
 

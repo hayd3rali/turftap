@@ -58,17 +58,21 @@ const OTPScreen = ({ route, navigation }) => {
       const profileResult = await dispatch(fetchProfile(result.payload.id))
       if (fetchProfile.fulfilled.match(profileResult)) {
         const p = profileResult.payload
-        // Check if profile is complete for either role
-        const ownerComplete  = p.role === 'Owner' && p.venue_name
-        const playerComplete = p.role === 'Player' && p.first_name
+        const ownerComplete  = p.role === 'Owner' && !!(p.venue_name || p.venueName)
+        const playerComplete = p.role === 'Player' && !!p.first_name
+
         if (ownerComplete || playerComplete) {
-          // Dispatch login to set Redux state — AppNavigator handles routing
           dispatch(login({
             role: p.role,
-            profileDetails: p,
+            profileDetails: {
+              ...p,
+              venue_name: p.venue_name || p.venueName || '',
+              venueName:  p.venue_name || p.venueName || '',
+              first_name: p.first_name || '',
+              last_name:  p.last_name  || '',
+            },
           }))
         } else {
-          // Incomplete profile — go to setup
           navigation.navigate('RoleSelection', { phoneNumber })
         }
       } else {

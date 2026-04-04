@@ -73,8 +73,10 @@ const LoginScreen = () => {
             role: p.role || 'Player',
             profileDetails: {
               ...p,
-              venue_name: p.venue_name || '',
-              venueName:  p.venue_name || '',
+              venue_name: p.venue_name || p.venueName || '',
+              venueName:  p.venue_name || p.venueName || '',
+              first_name: p.first_name || '',
+              last_name:  p.last_name  || '',
             },
           }))
         }

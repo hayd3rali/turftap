@@ -212,8 +212,7 @@ const HomeScreen = () => {
         </ScrollView>
 
         {/* TODO: replace AREAS with Google Places Nearby API results
-            Recommended free alternative if Google Maps billing is an issue: OpenStreetMap + Nominatim API (100% free, no billing required)
-            Google Maps: requires billing account but has $200/month free credit (sufficient for student projects)
+            
         */}
         {/* ═══ POPULAR AREAS ═══ */}
         <View style={s.areasSection}>
@@ -348,14 +347,14 @@ const s = StyleSheet.create({
     borderColor: '#FFFFFF',
   },
 
-  searchWrapper:   { marginHorizontal: 16, marginTop: 12, zIndex: 100 },
+  searchWrapper: { marginHorizontal: 16, marginTop: 12, zIndex: 100 },
   searchBar: {
     flexDirection: 'row', alignItems: 'center',
     backgroundColor: '#F9FAFB', borderRadius: 12,
     borderWidth: 1, borderColor: '#E5E7EB',
     paddingHorizontal: 14, paddingVertical: 10, gap: 8,
   },
-  searchInput:     { flex: 1, fontSize: 14, color: '#1A1A2E' },
+  searchInput: { flex: 1, fontSize: 14, color: '#1A1A2E' },
   suggestionsBox: {
     backgroundColor: '#FFFFFF', borderRadius: 12,
     borderWidth: 1, borderColor: '#E5E7EB',
@@ -368,8 +367,8 @@ const s = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 12,
     borderBottomWidth: 1, borderBottomColor: '#F3F4F6',
   },
-  suggestionName:  { fontSize: 14, fontWeight: '600', color: '#1A1A2E' },
-  suggestionArea:  { fontSize: 12, color: '#6B7280', marginTop: 2 },
+  suggestionName: { fontSize: 14, fontWeight: '600', color: '#1A1A2E' },
+  suggestionArea: { fontSize: 12, color: '#6B7280', marginTop: 2 },
 
   /* ── promo cards ── */
   promoScroll: {
