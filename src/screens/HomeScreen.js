@@ -211,9 +211,6 @@ const HomeScreen = () => {
           ))}
         </ScrollView>
 
-        {/* TODO: replace AREAS with Google Places Nearby API results
-            
-        */}
         {/* ═══ POPULAR AREAS ═══ */}
         <View style={s.areasSection}>
           <Text style={s.sectionTitle}>Popular Areas</Text>

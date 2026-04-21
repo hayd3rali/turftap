@@ -16,7 +16,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.hyd3r.turftap",
+      "package": "[package name]",
       "config": {
         "googleMaps": {
           "apiKey": "[GCP_API_KEY]"
@@ -38,7 +38,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "c4fee4ed-c07a-4759-ac5f-69d9ecd7f41e"
+        "projectId": "[projectId]"
       }
     },
     "owner": "turftap"
