@@ -167,4 +167,5 @@ src/
 
 ## License
 
-This project is private and not licensed for redistribution.
+The "default" license for source code with no specific license stated is standard copyright, which means nobody but the owner is allowed to copy and distribute the code. You automatically have copyright on anything you write - a copyright notice is merely informative, it does not grant you any right beyond what you have by default.
+Copyright (c) 2026 [Haider Ali Warsi]. All rights reserved.
